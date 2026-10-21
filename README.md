@@ -32,10 +32,12 @@ kapakodu/
 ├── assets/
 │   ├── css/            stiilifailid
 │   └── images/         logod ja loomade pildid
-└── admin/
-    ├── index.html      administraatori avaleht
-    ├── animals.html    loomade haldamise vaade
-    └── animal_add.html looma lisamise ja muutmise vorm
+├── admin/
+│   ├── index.html      administraatori avaleht
+│   ├── animals.html    loomade haldamise vaade
+│   └── animal_add.html looma lisamise ja muutmise vorm
+└── database/
+    └── kapakodu.sql    andmebaasi varukoopia
 ```
 
 ## Käivitamine
