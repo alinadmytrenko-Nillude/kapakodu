@@ -56,7 +56,7 @@ Kõik HTML-lehed on kontrollitud [W3C validaatoriga](https://validator.w3.org/).
 - [x] Veebirakendusel on avaleht, kus kuvatakse loomade nimekiri koos piltidega
 - [ ] Loomi saab otsida nime järgi
 - [ ] Loomi saab filtreerida
-- [ ] Looma valimisel kuvatakse tema detailvaade
+- [x] Looma valimisel kuvatakse tema detailvaade
 - [ ] Külastaja saab saata päringu kontaktivormi kaudu
 - [x] Veebirakendus kohandub erinevate ekraanisuurustega
 - [ ] Veebivormid sisaldavad kliendipoolset valideerimist
