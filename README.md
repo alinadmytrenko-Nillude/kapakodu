@@ -53,3 +53,4 @@ HTML-lehed tuleb kontrollida [W3C validaatoriga](https://validator.w3.org/).
 - Ülesanne 8: dünaamiline avaleht (`index.php`) ja detailvaade (`animal.php`) andmebaasist, ühendus failis `config.php`.
 
 Loomade nimekiri, otsing, filtrid, vormide töötlemine, sisselogimine ja admini haldus lisatakse järgmistes ülesannetes.
+Loomade nimekiri, otsing, filtrid, vormide töötlemine, sisselogimine ja admini haldus lisatakse järgmistes ülesannetes.
