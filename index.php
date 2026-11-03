@@ -1,3 +1,16 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+// 4 viimati lisatud looma
+$tulemus = $yhendus->query(
+    "SELECT l.id, l.nimi, li.nimetus AS liik, l.sugu, l.vanus, l.luhikirjeldus, l.pilt
+     FROM loomad l
+     JOIN liigid li ON li.id = l.liik_id
+     ORDER BY l.id DESC
+     LIMIT 4"
+);
+$loomad = $tulemus->fetch_all(MYSQLI_ASSOC);
+?>
 <!doctype html>
 <html lang="et">
 
@@ -16,7 +29,7 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="index.php">
                     <img src="assets/images/logo_big.svg" alt="Logo" width="140">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -26,7 +39,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item"> <a class="nav-link active" href="index.html"><strong>Avaleht</strong></a></li>
+                        <li class="nav-item"> <a class="nav-link active" href="index.php"><strong>Avaleht</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="all_animals.html"><strong>Loomad</strong></a> </li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Kuidas aidata</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Meist</strong></a> </li>
@@ -141,46 +154,23 @@
             </div>
 
             <div class="row g-4">
+<?php foreach ($loomad as $loom):
+    $pilt = is_file(__DIR__ . '/assets/images/' . $loom['pilt'])
+        ? 'assets/images/' . $loom['pilt']
+        : 'assets/images/placeholder.svg';
+?>
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100 shadow-sm">
-                        <img src="assets/images/mimi.png" class="card-img-top" alt="Mimi">
+                        <img src="<?= h($pilt) ?>" class="card-img-top" alt="<?= h($loom['nimi']) ?>">
                         <div class="card-body">
-                            <h5 class="card-title">Mimi</h5>
-                            <p class="card-text">Kass, 6 kuud</p>
-                            <a href="animal.html" class="btn btn-success">Vaata lähemalt</a>
+                            <h5 class="card-title"><?= h($loom['nimi']) ?></h5>
+                            <p class="card-text mb-1"><?= h($loom['liik']) ?>, <?= h($loom['sugu']) ?>, <?= h($loom['vanus']) ?></p>
+                            <p class="card-text small text-muted"><?= h($loom['luhikirjeldus']) ?></p>
+                            <a href="animal.php?id=<?= (int)$loom['id'] ?>" class="btn btn-success">Vaata lähemalt</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm">
-                        <img src="assets/images/musti.png" class="card-img-top" alt="Musti">
-                        <div class="card-body">
-                            <h5 class="card-title">Musti</h5>
-                            <p class="card-text">Koer, 3 aastat</p>
-                            <a href="animal.html" class="btn btn-success">Vaata lähemalt</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm">
-                        <img src="assets/images/rex.png" class="card-img-top" alt="Rex">
-                        <div class="card-body">
-                            <h5 class="card-title">Rex</h5>
-                            <p class="card-text">Koer, 2 aastat</p>
-                            <a href="animal.html" class="btn btn-success">Vaata lähemalt</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 shadow-sm">
-                        <img src="assets/images/triibik.png" class="card-img-top" alt="Triibik">
-                        <div class="card-body">
-                            <h5 class="card-title">Triibik</h5>
-                            <p class="card-text">Kass, 1 aasta</p>
-                            <a href="animal.html" class="btn btn-success">Vaata lähemalt</a>
-                        </div>
-                    </div>
-                </div>
+<?php endforeach; ?>
             </div>
 
             <div class="text-center mt-5">
@@ -222,7 +212,7 @@
                         <h5 class="fw-bold mb-3">Kiirlingid</h5>
 
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="index.html" class="text-decoration-none text-dark">Avaleht</a></li>
+                            <li class="mb-2"><a href="index.php" class="text-decoration-none text-dark">Avaleht</a></li>
                             <li class="mb-2"><a href="all_animals.html" class="text-decoration-none text-dark">Loomad</a></li>
                             <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Kuidas aidata</a></li>
                             <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Meist</a></li>
