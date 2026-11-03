@@ -17,8 +17,36 @@ Käpakodu on loomade varjupaiga veebirakendus, mis võimaldab külastajatel tutv
 - Apache 2.4
 - Git ja GitHub
 
+
 ## Projekti struktuur
 
+```
+kapakodu/
+├── index.php            avaleht (4 viimati lisatud looma andmebaasist)
+├── animal.php           looma detailvaade (animal.php?id=...)
+├── all_animals.html     kõik loomad (staatiline)
+├── contact.html         kontaktileht
+├── login.html           sisselogimisleht
+├── config.example.php   andmebaasi seadete näidis
+├── .gitignore           (config.php ei lähe GitHubi)
+├── README.md
+├── ulesanne03.md        SQL-päringud (Ülesanne 3)
+├── ulesanne04.md        SQL-päringud (Ülesanne 4)
+├── ylesanne07.md        JOIN-päringud (Ülesanne 7)
+├── assets/
+│   ├── css/             stiilifailid
+│   └── images/          logod ja loomade pildid
+├── admin/
+│   ├── index.html       administraatori avaleht
+│   ├── animals.html     loomade haldamise vaade
+│   └── animal_add.html  looma lisamise ja muutmise vorm
+├── database/
+│   ├── kapakodu.sql     andmebaasi varukoopia (praegune seis)
+│   ├── kapakodu_ul2.sql Ülesanne 2 varukoopia
+│   └── kapakodu_ul6.sql Ülesanne 6 varukoopia
+└── docs/
+    └── ulesanne05_er.pdf  ER-diagramm
+```
 ## Andmebaas
 
 Andmebaas `kapakodu` koosneb tabelitest `liigid`, `toud`, `tootajad`, `loomad` ja `paringud`. Tabelite vahel on võõrvõtmed (`ON DELETE RESTRICT`, `ON UPDATE CASCADE`).
