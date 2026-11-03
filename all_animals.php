@@ -1,3 +1,73 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+$q = trim((string) filter_input(INPUT_GET, 'q', FILTER_DEFAULT));
+$q = mb_substr($q, 0, 50);
+
+$liik_id = filter_input(INPUT_GET, 'liik', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+if ($liik_id === false) { $liik_id = null; }
+
+$sugu = trim((string) filter_input(INPUT_GET, 'sugu', FILTER_DEFAULT));
+$vanus = trim((string) filter_input(INPUT_GET, 'vanus', FILTER_DEFAULT));
+
+$liigid = $yhendus->query("SELECT id, nimetus FROM liigid ORDER BY nimetus")->fetch_all(MYSQLI_ASSOC);
+$sugud = array_column(
+    $yhendus->query("SELECT DISTINCT sugu FROM loomad ORDER BY sugu")->fetch_all(MYSQLI_ASSOC),
+    'sugu'
+);
+$vanused = [
+    'a' => ['Alla 2 aasta', 0, 2],
+    'b' => ['2–4 aastat', 2, 5],
+    'c' => ['5–8 aastat', 5, 9],
+    'd' => ['9 aastat ja vanemad', 9, null],
+];
+
+if ($sugu !== '' && !in_array($sugu, $sugud, true)) { $sugu = ''; }
+if ($vanus !== '' && !isset($vanused[$vanus])) { $vanus = ''; }
+
+$sql = "SELECT l.id, l.nimi, li.nimetus AS liik, l.sugu, l.vanus, l.luhikirjeldus, l.pilt
+        FROM loomad l
+        JOIN liigid li ON li.id = l.liik_id
+        WHERE 1=1";
+$tyybid = '';
+$param = [];
+
+if ($q !== '') {
+    $sql .= " AND l.nimi LIKE ?";
+    $tyybid .= 's';
+    $param[] = '%' . addcslashes($q, '%_\\') . '%';
+}
+if ($liik_id !== null) {
+    $sql .= " AND l.liik_id = ?";
+    $tyybid .= 'i';
+    $param[] = $liik_id;
+}
+if ($sugu !== '') {
+    $sql .= " AND l.sugu = ?";
+    $tyybid .= 's';
+    $param[] = $sugu;
+}
+if ($vanus !== '') {
+    [, $min, $max] = $vanused[$vanus];
+    $sql .= " AND l.vanus >= ?";
+    $tyybid .= 'i';
+    $param[] = $min;
+    if ($max !== null) {
+        $sql .= " AND l.vanus < ?";
+        $tyybid .= 'i';
+        $param[] = $max;
+    }
+}
+$sql .= " ORDER BY l.nimi";
+
+$stmt = $yhendus->prepare($sql);
+if ($param) {
+    $stmt->bind_param($tyybid, ...$param);
+}
+$stmt->execute();
+$loomad = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+?>
 <!doctype html>
 <html lang="et">
 
@@ -27,7 +97,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li class="nav-item"> <a class="nav-link" href="index.php"><strong>Avaleht</strong></a></li>
-                        <li class="nav-item"> <a class="nav-link active" aria-current="page" href="all_animals.html"><strong>Loomad</strong></a></li>
+                        <li class="nav-item"> <a class="nav-link active" aria-current="page" href="all_animals.php"><strong>Loomad</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Kuidas aidata</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Meist</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="contact.html"><strong>Kontakt</strong></a></li>
@@ -40,100 +110,78 @@
         </nav>
     </div>
     <!-- Header section end -->
-    <!-- Animals page -->
-    <!-- Filter -->
     <div class="container py-5">
 
-        <div class="text-center mb-5">
-            <h1 class="fw-bold">Kõik loomad</h1>
-            <p class="text-muted">
-                Tutvu meie hoolealustega ja leia endale uus parim sõber.
-            </p>
+        <div class="text-center mb-4">
+            <h1 class="fw-bold">Loomad</h1>
+            <p class="text-muted">Otsi ja filtreeri meie varjupaiga loomi.</p>
         </div>
 
-        <div class="row g-3 mb-5">
-
-            <div class="col-lg-4">
-                <input type="text" class="form-control" placeholder="Otsi looma nime järgi..." aria-label="Otsi looma nime järgi">
+        <form method="get" action="all_animals.php" class="row g-3 mb-5">
+            <div class="col-md-3">
+                <label for="q" class="form-label">Nimi</label>
+                <input type="text" class="form-control" id="q" name="q" maxlength="50" value="<?= h($q) ?>" placeholder="Otsi nime järgi">
             </div>
-
-            <div class="col-lg-2">
-                <select class="form-select" aria-label="Liik">
-                    <option>Kõik liigid</option>
-                    <option>Koerad</option>
-                    <option>Kassid</option>
+            <div class="col-md-2">
+                <label for="liik" class="form-label">Liik</label>
+                <select class="form-select" id="liik" name="liik">
+                    <option value="">Kõik</option>
+                    <?php foreach ($liigid as $li): ?>
+                        <option value="<?= (int)$li['id'] ?>"<?= $liik_id === (int)$li['id'] ? ' selected' : '' ?>><?= h($li['nimetus']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-
-            <div class="col-lg-2">
-                <select class="form-select" aria-label="Vanus">
-                    <option>Kõik vanused</option>
-                    <option>Kutsikas / Kassipoeg</option>
-                    <option>Noor</option>
-                    <option>Täiskasvanu</option>
+            <div class="col-md-2">
+                <label for="sugu" class="form-label">Sugu</label>
+                <select class="form-select" id="sugu" name="sugu">
+                    <option value="">Kõik</option>
+                    <?php foreach ($sugud as $s): ?>
+                        <option value="<?= h($s) ?>"<?= $sugu === $s ? ' selected' : '' ?>><?= h(ucfirst($s)) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-
-            <div class="col-lg-2">
-                <select class="form-select" aria-label="Sugu">
-                    <option>Kõik sood</option>
-                    <option>Isane</option>
-                    <option>Emane</option>
+            <div class="col-md-3">
+                <label for="vanus" class="form-label">Vanus</label>
+                <select class="form-select" id="vanus" name="vanus">
+                    <option value="">Kõik</option>
+                    <?php foreach ($vanused as $kood => $v): ?>
+                        <option value="<?= h($kood) ?>"<?= $vanus === (string)$kood ? ' selected' : '' ?>><?= h($v[0]) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
-
-            <div class="col-lg-2 d-grid">
-                <button class="btn btn-success" type="button">Filtreeri</button>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-success w-100">Otsi</button>
+                <a href="all_animals.php" class="btn btn-outline-secondary" title="Tühjenda">×</a>
             </div>
+        </form>
 
-        </div>
+        <p class="text-muted">Leitud loomi: <strong><?= count($loomad) ?></strong></p>
 
+        <?php if (!$loomad): ?>
+            <div class="alert alert-warning">Valitud tingimustega loomi ei leitud. Proovi muuta otsingut või filtreid.</div>
+        <?php else: ?>
         <div class="row g-4">
+            <?php foreach ($loomad as $loom):
+                $pilt = is_file(__DIR__ . '/assets/images/' . $loom['pilt'])
+                    ? 'assets/images/' . $loom['pilt']
+                    : 'assets/images/placeholder.svg';
+            ?>
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 shadow-sm">
-                    <img src="assets/images/rex.png" class="card-img-top" alt="Koer Rex">
+                    <img src="<?= h($pilt) ?>" class="card-img-top" alt="<?= h($loom['nimi']) ?>">
                     <div class="card-body">
-                        <h5 class="card-title">Rex</h5>
-                        <p class="card-text">Koer, Isane, 2 aastat</p>
-                        <a href="animal.php" class="btn btn-success">Vaata lähemalt</a>
+                        <h5 class="card-title"><?= h($loom['nimi']) ?></h5>
+                        <p class="card-text mb-1"><?= h($loom['liik']) ?>, <?= h($loom['sugu']) ?>, <?= h($loom['vanus']) ?> a</p>
+                        <p class="card-text small text-muted"><?= h($loom['luhikirjeldus']) ?></p>
+                        <a href="animal.php?id=<?= (int)$loom['id'] ?>" class="btn btn-success">Vaata lähemalt</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm">
-                    <img src="assets/images/mimi.png" class="card-img-top" alt="Kass Mimi">
-                    <div class="card-body">
-                        <h5 class="card-title">Mimi</h5>
-                        <p class="card-text">Kass, Emane, 6 kuud</p>
-                        <a href="animal.php" class="btn btn-success">Vaata lähemalt</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm">
-                    <img src="assets/images/musti.png" class="card-img-top" alt="Koer Musti">
-                    <div class="card-body">
-                        <h5 class="card-title">Musti</h5>
-                        <p class="card-text">Koer, Isane, 3 aastat</p>
-                        <a href="animal.php" class="btn btn-success">Vaata lähemalt</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm">
-                    <img src="assets/images/triibik.png" class="card-img-top" alt="Kass Triibik">
-                    <div class="card-body">
-                        <h5 class="card-title">Triibik</h5>
-                        <p class="card-text">Kass, Isane, 1 aasta</p>
-                        <a href="animal.php" class="btn btn-success">Vaata lähemalt</a>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
-
+        <?php endif; ?>
 
     </div>
-    <!-- Animals page end -->
     <!-- Footer -->
     <footer class="bg-white border-top mt-5">
         <div class="container py-5">
@@ -166,7 +214,7 @@
 
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="index.php" class="text-decoration-none text-dark">Avaleht</a></li>
-                        <li class="mb-2"><a href="all_animals.html" class="text-decoration-none text-dark">Loomad</a></li>
+                        <li class="mb-2"><a href="all_animals.php" class="text-decoration-none text-dark">Loomad</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Kuidas aidata</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Meist</a></li>
                         <li><a href="contact.html" class="text-decoration-none text-dark">Kontakt</a></li>

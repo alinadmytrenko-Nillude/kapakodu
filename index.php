@@ -40,7 +40,7 @@ $loomad = $tulemus->fetch_all(MYSQLI_ASSOC);
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li class="nav-item"> <a class="nav-link active" href="index.php"><strong>Avaleht</strong></a></li>
-                        <li class="nav-item"> <a class="nav-link" href="all_animals.html"><strong>Loomad</strong></a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="all_animals.php"><strong>Loomad</strong></a> </li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Kuidas aidata</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Meist</strong></a> </li>
                         <li class="nav-item"> <a class="nav-link" href="contact.html"><strong>Kontakt</strong></a> </li>
@@ -63,7 +63,7 @@ $loomad = $tulemus->fetch_all(MYSQLI_ASSOC);
                             <h1 class="display-4 fw-bold">Iga loom väärib armastust ja kodu</h1>
                             <p class="fs-5 pt-4 pb-4">Meie varjupaigas ootavad paljud toredad loomad oma päriskodu. Tule ja leia endale uus parim sõber!</p>
                             <div class="d-flex gap-2">
-                                <a href="all_animals.html" class="btn btn-success p-2 w-100"><i class="fa-solid fa-paw"></i> Vaata loomi</a>
+                                <a href="all_animals.php" class="btn btn-success p-2 w-100"><i class="fa-solid fa-paw"></i> Vaata loomi</a>
                                 <a href="#" class="btn btn-outline-success bg-white p-2 w-100">Kuidas aidata?</a>
                             </div>
                         </div>
@@ -174,7 +174,7 @@ $loomad = $tulemus->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <div class="text-center mt-5">
-                <a href="all_animals.html" class="btn btn-success px-5 py-2">Vaata kõiki loomi</a>
+                <a href="all_animals.php" class="btn btn-success px-5 py-2">Vaata kõiki loomi</a>
             </div>
 
         </div>
@@ -213,7 +213,7 @@ $loomad = $tulemus->fetch_all(MYSQLI_ASSOC);
 
                         <ul class="list-unstyled">
                             <li class="mb-2"><a href="index.php" class="text-decoration-none text-dark">Avaleht</a></li>
-                            <li class="mb-2"><a href="all_animals.html" class="text-decoration-none text-dark">Loomad</a></li>
+                            <li class="mb-2"><a href="all_animals.php" class="text-decoration-none text-dark">Loomad</a></li>
                             <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Kuidas aidata</a></li>
                             <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Meist</a></li>
                             <li><a href="contact.html" class="text-decoration-none text-dark">Kontakt</a></li>
