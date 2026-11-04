@@ -159,7 +159,7 @@ CREATE TABLE `paringud` (
   PRIMARY KEY (`id`),
   KEY `fk_paringud_loom` (`loom_id`),
   CONSTRAINT `fk_paringud_loom` FOREIGN KEY (`loom_id`) REFERENCES `loomad` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,7 +170,12 @@ LOCK TABLES `paringud` WRITE;
 /*!40000 ALTER TABLE `paringud` DISABLE KEYS */;
 INSERT INTO `paringud` VALUES
 (1,3,'Kati Mae','kati@example.com','Rexi adopteerimine','Tere! Soovin Rexi kohta rohkem infot.','uus','2026-10-27 11:37:33'),
-(2,NULL,'Martin Tamm','martin@example.com','Üldine küsimus','Millal te lahti olete?','uus','2026-10-27 11:37:33');
+(2,NULL,'Martin Tamm','martin@example.com','Üldine küsimus','Millal te lahti olete?','uus','2026-10-27 11:37:33'),
+(3,NULL,'Mari Tamm','mari.tamm@example.com','Küsimus adopteerimise kohta','Tere! Kuidas käib kassi adopteerimine ja kas varjupaika peab enne külastama?','uus','2026-11-04 09:20:49'),
+(4,22,'Jaan Kask','jaan.kask@example.com','Sipsiku kohta','Tere! Kas Sipsik on veel saadaval ja kas ta sobib lastega peresse?','uus','2026-11-04 09:20:49'),
+(5,NULL,'Liis Mägi','liis.magi@example.com','Vabatahtlikuks','Tere! Tahaksin tulla vabatahtlikuks loomi jalutama. Kuidas see käib?','menetlustes','2026-11-04 09:20:49'),
+(6,NULL,'Test Testija','test@example.com','Annetamine','See on testsõnum kontrollimiseks.','uus','2026-11-04 09:24:11'),
+(7,22,'Kaspar','k@example.com','Looma adopteerimine','Soovin Sipsikut adopteerida, kuidas edasi?','uus','2026-11-04 09:24:11');
 /*!40000 ALTER TABLE `paringud` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,4 +253,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-04  9:17:57
+-- Dump completed on 2026-11-04  9:24:22

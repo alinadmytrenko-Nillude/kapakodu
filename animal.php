@@ -73,7 +73,7 @@ require __DIR__ . '/breadcrumbs.php';
                         <p class="fw-semibold mb-1"><?= h($loom['luhikirjeldus']) ?></p>
                         <p><?= nl2br(h($loom['kirjeldus'])) ?></p>
 
-                        <a href="contact.php" class="btn btn-success px-4">Võta ühendust</a>
+                        <a href="contact.php?loom=<?= (int)$loom['id'] ?>" class="btn btn-success px-4">Võta ühendust</a>
                         <a href="all_animals.php" class="btn btn-outline-success px-4">Tagasi loomade juurde</a>
                     </div>
                 </div>
