@@ -30,6 +30,9 @@ require __DIR__ . '/includes/header.php';
         <?php if (isset($_GET['added'])): ?>
             <div class="alert alert-success">Loom lisati edukalt.</div>
         <?php endif; ?>
+        <?php if (isset($_GET['updated'])): ?>
+            <div class="alert alert-success">Looma andmed uuendati edukalt.</div>
+        <?php endif; ?>
     </div>
 <div class="container-xl">
     <!-- Lehe pealkiri -->
