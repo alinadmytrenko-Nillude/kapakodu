@@ -2,12 +2,29 @@
 require_once __DIR__ . '/includes/config.php';
 $page_title = 'Loomad – Admin – Alina Käpakodu';
 
-$loomad = $conn->query(
+$per_page = 5;
+$total = (int)$conn->query('SELECT COUNT(*) FROM loomad')->fetch_row()[0];
+$total_pages = max(1, (int)ceil($total / $per_page));
+
+$leht = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+if ($leht === null || $leht === false) { $leht = 1; }
+if ($leht > $total_pages) { $leht = $total_pages; }
+$offset = ($leht - 1) * $per_page;
+
+$stmt = $conn->prepare(
     "SELECT l.id, l.nimi, l.pilt, l.sugu, l.vanus, l.staatus, l.lisatud, li.nimetus AS liik
      FROM loomad l
      JOIN liigid li ON li.id = l.liik_id
-     ORDER BY l.id DESC"
-)->fetch_all(MYSQLI_ASSOC);
+     ORDER BY l.id DESC
+     LIMIT ? OFFSET ?"
+);
+$stmt->bind_param('ii', $per_page, $offset);
+$stmt->execute();
+$loomad = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+$from = $total === 0 ? 0 : $offset + 1;
+$to = $offset + count($loomad);
 
 $staatused = [
     'saadaval'   => ['bg-success-subtle text-success', 'Saadaval'],
@@ -179,8 +196,26 @@ require __DIR__ . '/includes/header.php';
         <div class="card-footer bg-white d-flex justify-content-between align-items-center">
 
             <small class="text-muted">
-                Kuvatakse kokku <?= count($loomad) ?> looma.
+                Kuvatakse <?= $from ?>–<?= $to ?> kokku <?= $total ?> loomast.
             </small>
+
+            <?php if ($total_pages > 1): ?>
+            <nav aria-label="Lehekülgede navigatsioon">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item<?= $leht <= 1 ? ' disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= max(1, $leht - 1) ?>">Eelmine</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item<?= $i === $leht ? ' active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                    <?php endfor; ?>
+                    <li class="page-item<?= $leht >= $total_pages ? ' disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= min($total_pages, $leht + 1) ?>">Järgmine</a>
+                    </li>
+                </ul>
+            </nav>
+            <?php endif; ?>
 
         </div>
     </div>
