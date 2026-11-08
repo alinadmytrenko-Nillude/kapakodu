@@ -39,7 +39,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="animal_add.html">
+                        <a class="nav-link" href="animal_add.php">
                             <i class="fa-solid fa-plus me-1"></i>
                             Lisa loom
                         </a>

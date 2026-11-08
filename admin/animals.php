@@ -27,6 +27,9 @@ require __DIR__ . '/includes/header.php';
         <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-danger">Looma kustutamine ebaõnnestus.</div>
         <?php endif; ?>
+        <?php if (isset($_GET['added'])): ?>
+            <div class="alert alert-success">Loom lisati edukalt.</div>
+        <?php endif; ?>
     </div>
 <div class="container-xl">
     <!-- Lehe pealkiri -->
@@ -39,7 +42,7 @@ require __DIR__ . '/includes/header.php';
             </p>
         </div>
 
-        <a href="animal_add.html" class="btn btn-success">
+        <a href="animal_add.php" class="btn btn-success">
             <i class="fa-solid fa-plus me-2"></i>
             Lisa uus loom
         </a>

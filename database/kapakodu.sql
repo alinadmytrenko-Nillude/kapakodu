@@ -76,7 +76,7 @@ CREATE TABLE `loomad` (
   CONSTRAINT `fk_loomad_liik` FOREIGN KEY (`liik_id`) REFERENCES `liigid` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_loomad_tootaja` FOREIGN KEY (`tootaja_id`) REFERENCES `tootajad` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_loomad_toug` FOREIGN KEY (`toug_id`) REFERENCES `toud` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ INSERT INTO `loomad` VALUES
 (20,1,3,1,'Muri','emane',9,'2017-11-11','suur','Must','Tallinn','Rahulik','Vajab rahulikku kodu.','muri.jpg','hoolduses',1,1,'2026-07-18'),
 (21,2,4,2,'Triibu','isane',7,'2019-04-20','väike','Triibuline','Põlva','Tasane','Meeldib aknal istuda.','triibu.jpg','broneeritud',1,1,'2026-07-19'),
 (22,2,4,1,'Sipsik','emane',3,'2023-06-06','väike','Must-valge','Keila','Seltskondlik','Naudib mängimist ja tähelepanu.','sipsik.jpg','saadaval',1,1,'2026-07-20'),
-(23,2,4,1,'Test','emane',1,'2025-01-01','väike','Hall','Keila','Test','Kustutamise test','test.jpg','saadaval',0,0,'2026-11-04');
+(27,1,1,1,'Brauni2','isane',2,NULL,'keskmine','pruun','Tallinn','pruun labrodor','koer','1794145849_brauni2.jpg','saadaval',0,0,'2026-11-08');
 /*!40000 ALTER TABLE `loomad` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -254,4 +254,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-04  9:58:07
+-- Dump completed on 2026-11-08 16:00:24
