@@ -69,7 +69,7 @@
                     Admin
                 </span>
 
-                <a href="../login.html" class="btn btn-outline-danger">
+                <a href="../logout.php" class="btn btn-outline-danger">
                     <i class="fa-solid fa-right-from-bracket me-2"></i>
                     Logi välja
                 </a>

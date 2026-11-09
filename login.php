@@ -1,3 +1,54 @@
+<?php
+session_start();
+require_once __DIR__ . '/config.php';
+
+if (!empty($_SESSION['tootaja'])) {
+    header('Location: admin/index.php');
+    exit;
+}
+
+$viga = '';
+$email = '';
+if (isset($_COOKIE['meelespea_email'])) {
+    $email = (string)$_COOKIE['meelespea_email'];
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string)($_POST['email'] ?? ''));
+    $parool = (string)($_POST['parool'] ?? '');
+    $stmt = $yhendus->prepare('SELECT id, nimi, email, roll, parool FROM tootajad WHERE email = ?');
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $t = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if ($t && password_verify($parool, $t['parool'])) {
+        session_regenerate_id(true);
+        $_SESSION['tootaja'] = [
+            'id' => (int)$t['id'],
+            'nimi' => $t['nimi'],
+            'email' => $t['email'],
+            'roll' => $t['roll'],
+        ];
+        if (!empty($_POST['meelespea'])) {
+            setcookie('meelespea_email', $t['email'], [
+                'expires' => time() + 30 * 24 * 60 * 60,
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        } else {
+            setcookie('meelespea_email', '', [
+                'expires' => time() - 3600,
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        }
+        header('Location: admin/index.php');
+        exit;
+    }
+    $viga = 'Vale e-post või parool.';
+}
+?>
 <!doctype html>
 <html lang="et">
 
@@ -16,7 +67,7 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="index.php">
                     <img src="assets/images/logo_big.svg" alt="Logo" width="140">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -26,7 +77,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item"> <a class="nav-link" href="index.html"><strong>Avaleht</strong></a></li>
+                        <li class="nav-item"> <a class="nav-link" href="index.php"><strong>Avaleht</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="all_animals.php"><strong>Loomad</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Kuidas aidata</strong></a></li>
                         <li class="nav-item"> <a class="nav-link" href="#"><strong>Meist</strong></a></li>
@@ -57,7 +108,10 @@
                             </p>
                         </div>
 
-                        <form>
+                        <form method="post" action="login.php">
+                        <?php if ($viga !== ''): ?>
+                        <div class="alert alert-danger" role="alert"><?= h($viga) ?></div>
+                        <?php endif; ?>
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">
@@ -69,7 +123,7 @@
                                         <i class="fa-regular fa-envelope"></i>
                                     </span>
 
-                                    <input type="email" class="form-control" placeholder="Sinu e-post">
+                                    <input type="email" class="form-control" id="email" name="email" value="<?= h($email) ?>" required placeholder="Sinu e-post">
                                 </div>
                             </div>
 
@@ -83,7 +137,7 @@
                                         <i class="fa-solid fa-lock"></i>
                                     </span>
 
-                                    <input type="password" class="form-control" placeholder="Sinu parool">
+                                    <input type="password" class="form-control" id="parool" name="parool" required placeholder="Sinu parool">
 
                                     <button class="btn btn-outline-secondary" type="button" aria-label="Näita parooli">
                                         <i class="fa-regular fa-eye"></i>
@@ -94,7 +148,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-4">
 
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember">
+                                    <input class="form-check-input" type="checkbox" id="remember" name="meelespea" value="1"<?= isset($_COOKIE["meelespea_email"]) ? " checked" : "" ?>>
 
                                     <label class="form-check-label" for="remember">
                                         Jäta mind meelde
@@ -108,7 +162,7 @@
                             </div>
 
                             <div class="d-grid mb-4">
-                                <button class="btn btn-success">
+                                <button type="submit" class="btn btn-success">
                                     Logi sisse
                                 </button>
                             </div>
@@ -166,7 +220,7 @@
                     <h5 class="fw-bold mb-3">Kiirlingid</h5>
 
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="index.html" class="text-decoration-none text-dark">Avaleht</a></li>
+                        <li class="mb-2"><a href="index.php" class="text-decoration-none text-dark">Avaleht</a></li>
                         <li class="mb-2"><a href="all_animals.php" class="text-decoration-none text-dark">Loomad</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Kuidas aidata</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Meist</a></li>
