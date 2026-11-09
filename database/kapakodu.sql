@@ -195,7 +195,8 @@ CREATE TABLE `tootajad` (
   `parool` varchar(255) NOT NULL,
   `roll` enum('admin','töötaja') NOT NULL,
   `lisatud` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_tootajad_email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -206,7 +207,7 @@ CREATE TABLE `tootajad` (
 LOCK TABLES `tootajad` WRITE;
 /*!40000 ALTER TABLE `tootajad` DISABLE KEYS */;
 INSERT INTO `tootajad` VALUES
-(1,'Alina Dmytrenko','alina@varjupaik.ee','+372 5555 1001','f9c80861456cdd34bebfa8886ae3436f22bbc7343e27df6a3376bcce23ed330d','admin','2026-10-27 11:31:39'),
+(1,'Alina Dmytrenko','alina@varjupaik.ee','+372 5555 1001','$2y$10$yeAMpbULk.K2g8WC0v2nZuRd5wd0gEQPDsbtlY971cbKUPLIdllNy','admin','2026-10-27 11:31:39'),
 (2,'Mari Tamm','mari@varjupaik.ee','+372 5555 1002','f9c80861456cdd34bebfa8886ae3436f22bbc7343e27df6a3376bcce23ed330d','töötaja','2026-10-27 11:31:39');
 /*!40000 ALTER TABLE `tootajad` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -254,4 +255,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-08 16:51:45
+-- Dump completed on 2026-11-09 10:15:37
